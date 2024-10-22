@@ -3,5 +3,5 @@ export interface Movie {
     title: string;
     studios: string;
     producers: string;
-    winner: 'YES' | 'NOT';
+    winner: string
 }
