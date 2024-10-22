@@ -1,9 +1,12 @@
 import { Request, Response } from 'express';
+import { getMovies } from '../models/movie-model';
 
-export const getMovies = async (req: Request, res: Response) => {
+export const getMoviesController = async (req: Request, res: Response) => {
     try {
-        res.json({ ok: true });
+        const movies = await getMovies()
+        res.json(movies);
     } catch (error) {
+        console.log(error)
         res.status(500).send('Internal Server Error');
     }
 };

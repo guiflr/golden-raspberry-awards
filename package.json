@@ -8,7 +8,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "seed": "ts-node src/index.ts",
-    "api:dev": "nodemon src/server.ts"
+    "dev:api": "nodemon src/server.ts"
   },
   "keywords": [],
   "author": "",
