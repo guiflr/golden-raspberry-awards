@@ -1,4 +1,4 @@
-# Hot To Manage The Project
+# How To Manage The Project
 
 ## Scripts
 
