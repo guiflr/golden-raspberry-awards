@@ -10,3 +10,6 @@ app.use('/api/movies', movieRouter);
 app.listen(PORT, () => {
     console.log(`Server is running http://localhost:${PORT}`);
 });
+
+
+export { app }
