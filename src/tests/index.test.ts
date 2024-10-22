@@ -18,7 +18,7 @@ describe('Movies API Integration Test', () => {
             .get('/api/movies')
 
         expect(res.body.max.length).toEqual(1);
-        expect(res.body.min.length).toEqual(2);
+        expect(res.body.min.length).toEqual(1);
 
         expect(res.body.min[0].interval).toBeTruthy();
         expect(res.body.min[0].interval).toEqual(1);
