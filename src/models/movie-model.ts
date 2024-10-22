@@ -1,9 +1,13 @@
+import { Result } from "../types/Results";
 import { getWinners } from "../repositories/movie-repository";
+import { getMaxTimeProducer } from "../utils/get-max-time-producer";
+import { getMinTimeProducer } from "../utils/get-min-time-producer";
 import { groupProducerByWins } from "../utils/group-producers-by-wins";
+import { getMinSpaceBetweenProducerWins } from "../utils/get-min-space-between-producer-wins";
+import { getMaxSpaceBetweenProducerWins } from "../utils/get-max-space-between-producer-wins";
 
 export async function getMovies() {
     const winners = await getWinners()
-
     const producerWins = groupProducerByWins(winners)
 
     const producersWithMoreThanOneWin = producerWins.filter(movie => {
@@ -11,28 +15,18 @@ export async function getMovies() {
         return movie[producer].length > 1
     })
 
-    const movies = {}
+    const results: Result = {}
     producersWithMoreThanOneWin.forEach(movie => {
         const [key] = Object.keys(movie)
-
-        const spaceBetweenMaxMovies = movie[key].map((current, index) => {
-            if (movie[key][index + 1]) {
-                const filteredMovies = movie[key][index + 1]
-                const subYears = { interval: Math.abs(filteredMovies.year - current.year), previousWin: filteredMovies.year, followingWin: current.year }
-                return subYears
-            }
-            return []
-        }).flat()
-        const [max] = spaceBetweenMaxMovies.sort((a, b) => b.interval - a.interval)
-
-        const spaceBetweenMinMovies = movie[key].map((current, index) => {
-            const filteredMovies = movie[key].filter((_, skipIndex) => skipIndex !== index)
-            const subYears = filteredMovies.map(filMovie => ({ interval: Math.abs(filMovie.year - current.year), previousWin: filMovie.year, followingWin: current.year }))
-            return subYears
-        }).flat()
-        const [min] = spaceBetweenMinMovies.sort((a, b) => a.interval - b.interval)
-
-        Object.assign(movies, { [key]: { movies: movie[key], max, min } })
+        const maxSpaceBetweenMovies = getMaxSpaceBetweenProducerWins(movie[key], key)
+        const minSpaceBetweenMovies = getMinSpaceBetweenProducerWins(movie[key], key)
+        Object.assign(results, { [key]: { max: maxSpaceBetweenMovies, min: minSpaceBetweenMovies } })
     })
-    return movies
+
+    const badProducers = getMaxTimeProducer(results)
+    const theBestProducers = getMinTimeProducer(results)
+    const extractBadProducersValues = badProducers.map(producer => producer.max)
+    const extractTheBestProducersValues = theBestProducers.map(producer => producer.min)
+
+    return { max: extractBadProducersValues, min: extractTheBestProducersValues }
 }
