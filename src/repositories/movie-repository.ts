@@ -6,3 +6,7 @@ export async function createMovie(movie: Movie) {
         data: movie,
     });
 }
+
+export function getWinners() {
+    return prisma.film.findMany({ where: { winner: 'YES' }, orderBy: { year: 'desc' } })
+}
